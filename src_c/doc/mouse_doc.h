@@ -2,6 +2,7 @@
 #define DOC_MOUSE "pygame module to work with the mouse"
 #define DOC_MOUSE_GETPRESSED "get_pressed(num_buttons=3) -> (button1, button2, button3)\nget_pressed(num_buttons=5) -> (button1, button2, button3, button4, button5)\nget the state of the mouse buttons"
 #define DOC_MOUSE_GETPOS "get_pos() -> (x, y)\nget the mouse cursor position"
+#define DOC_MOUSE_GETPRECISEPOS "get_precise_pos() -> (x, y)\nget the mouse precise cursor position\nSDL3 or higher is required"
 #define DOC_MOUSE_GETREL "get_rel() -> (x, y)\nget the amount of mouse movement"
 #define DOC_MOUSE_SETPOS "set_pos([x, y]) -> None\nset the mouse cursor position"
 #define DOC_MOUSE_SETVISIBLE "set_visible(bool) -> bool\nhide or show the mouse cursor"

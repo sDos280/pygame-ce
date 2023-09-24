@@ -101,6 +101,48 @@ mouse_get_pos(PyObject *self, PyObject *_null)
 }
 
 static PyObject *
+mouse_get_precise_pos(PyObject *self, PyObject *_null)
+{
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+    float x, y;
+
+    VIDEO_INIT_CHECK();
+    SDL_GetMouseState(&x, &y);
+
+    {
+        SDL_Window *sdlWindow = pg_GetDefaultWindow();
+        SDL_Renderer *sdlRenderer = SDL_GetRenderer(sdlWindow);
+        if (sdlRenderer != NULL) {
+            SDL_Rect vprect;
+            float scalex, scaley;
+
+            SDL_RenderGetScale(sdlRenderer, &scalex, &scaley);
+            SDL_RenderGetViewport(sdlRenderer, &vprect);
+
+            x = x / scalex;
+            y = y / scaley;
+
+            x -= vprect.x;
+            y -= vprect.y;
+
+            if (x < 0)
+                x = 0;
+            if (x >= vprect.w)
+                x = vprect.w - 1;
+            if (y < 0)
+                y = 0;
+            if (y >= vprect.h)
+                y = vprect.h - 1;
+        }
+    }
+
+    return pg_tuple_couple_from_values_float(x, y);
+#else
+    return RAISE(PyExc_NotImplementedError, "SDL 3.0.0 or higher is required");
+#endif
+}
+
+static PyObject *
 mouse_get_rel(PyObject *self, PyObject *_null)
 {
     int x, y;
@@ -464,6 +506,7 @@ mouse_get_cursor(PyObject *self, PyObject *_null)
 static PyMethodDef _mouse_methods[] = {
     {"set_pos", mouse_set_pos, METH_VARARGS, DOC_MOUSE_SETPOS},
     {"get_pos", (PyCFunction)mouse_get_pos, METH_NOARGS, DOC_MOUSE_GETPOS},
+    {"get_precise_pos", (PyCFunction)mouse_get_pos, METH_NOARGS, DOC_MOUSE_GETPRECISEPOS},
     {"get_rel", (PyCFunction)mouse_get_rel, METH_NOARGS, DOC_MOUSE_GETREL},
     {"get_pressed", (PyCFunction)mouse_get_pressed,
      METH_VARARGS | METH_KEYWORDS, DOC_MOUSE_GETPRESSED},
